@@ -9,7 +9,7 @@ const glow = keyframes`
 
 const ButtonContainer = styled.div`
   position: absolute;
-  bottom: 2rem;
+  bottom: 4rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -18,27 +18,41 @@ const ButtonContainer = styled.div`
 `
 
 const TokenButton = styled.button`
-  background: rgba(0, 0, 0, 0.8);
+  background: linear-gradient(
+    180deg, 
+    rgba(0, 255, 0, 0.15) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
   border: 1px solid #00ff00;
   color: #00ff00;
   padding: 0.8rem 1.5rem;
   font-family: ${props => props.theme.fonts.secondary};
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: 1px;
   cursor: pointer;
   transition: all 0.3s ease;
   animation: ${glow} 2s infinite;
   text-transform: uppercase;
+  backdrop-filter: blur(5px);
 
   &:hover {
-    background: rgba(0, 255, 0, 0.1);
+    background: linear-gradient(
+      180deg, 
+      rgba(0, 255, 0, 0.2) 0%,
+      rgba(255, 255, 255, 0.1) 100%
+    );
     transform: translateY(-2px);
     animation: ${glow} 1s infinite;
   }
 
   &:active {
     transform: translateY(0);
+    background: linear-gradient(
+      180deg, 
+      rgba(0, 255, 0, 0.15) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
   }
 `
 
