@@ -15,9 +15,17 @@ const StatContainer = styled.span<{ delay?: string }>`
   gap: 0.5rem;
 `
 
-const Value = styled.span<{ isWarning?: boolean }>`
-  color: ${props => props.isWarning ? '#FF0000' : props.theme.colors.primary};
-  text-shadow: 0 0 8px ${props => props.isWarning ? '#FF0000' : props.theme.colors.primary}80;
+const Value = styled.span<{ isWarning?: boolean; isLatency?: boolean }>`
+  color: ${props => {
+    if (props.isLatency) return '#FF0000'
+    if (props.isWarning) return '#FF0000'
+    return props.theme.colors.primary
+  }};
+  text-shadow: 0 0 8px ${props => {
+    if (props.isLatency) return '#FF000080'
+    if (props.isWarning) return '#FF000080'
+    return `${props.theme.colors.primary}80`
+  }};
 `
 
 interface AnimatedStatProps {
@@ -31,6 +39,7 @@ interface AnimatedStatProps {
   fluctuationRange?: number
   updateInterval?: number
   warningThreshold?: number
+  isLatency?: boolean
 }
 
 export const AnimatedStat: React.FC<AnimatedStatProps> = ({
@@ -43,7 +52,8 @@ export const AnimatedStat: React.FC<AnimatedStatProps> = ({
   decimals = 2,
   fluctuationRange = 0.5,
   updateInterval = 100,
-  warningThreshold
+  warningThreshold,
+  isLatency = false
 }) => {
   const [value, setValue] = useState(startValue)
   const [hasReachedTarget, setHasReachedTarget] = useState(false)
@@ -91,7 +101,13 @@ export const AnimatedStat: React.FC<AnimatedStatProps> = ({
 
   return (
     <StatContainer delay={delay}>
-      {label}: <Value isWarning={warningThreshold && value > warningThreshold}>{value}{unit}</Value>
+      {label}: <Value 
+        isWarning={warningThreshold && value > warningThreshold}
+        isLatency={isLatency}
+      >
+        {value.toFixed(decimals)}
+        {unit}
+      </Value>
     </StatContainer>
   )
 } 
