@@ -1,6 +1,6 @@
 'use client'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei'
+import { OrbitControls, PerspectiveCamera, Environment, Center } from '@react-three/drei'
 import { BrainModel } from './BrainModel'
 import styled from 'styled-components'
 
@@ -9,6 +9,9 @@ const CanvasContainer = styled.div`
   height: 100vh;
   position: relative;
   background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 export function BrainContainer() {
@@ -16,21 +19,22 @@ export function BrainContainer() {
     <CanvasContainer>
       <Canvas
         camera={{ 
-          position: [0, 0, 5],  // Moved camera closer
-          fov: 75,  // Wider field of view
+          position: [0, 0, 5],
+          fov: 75,
           near: 0.1,
           far: 1000
         }}
         style={{ background: 'transparent' }}
       >
         <OrbitControls 
-          enableZoom={true}  // Enable zoom for debugging
-          enablePan={true}   // Enable pan for debugging
-          minDistance={2}    // Limit how close we can zoom
-          maxDistance={10}   // Limit how far we can zoom
+          enableZoom={true}
+          enablePan={true}
+          minDistance={2}
+          maxDistance={10}
+          enableRotate={false} // Disable manual rotation since we have auto-rotation
         />
         
-        {/* Stronger lighting */}
+        {/* Adjust lighting for brain */}
         <ambientLight intensity={2} />
         <directionalLight position={[5, 5, 5]} intensity={2} />
         <pointLight position={[10, 10, 10]} intensity={2} />
@@ -38,7 +42,9 @@ export function BrainContainer() {
         
         <Environment preset="city" />
         
-        <BrainModel />
+        <Center> {/* This ensures perfect centering */}
+          <BrainModel scale={0.88} />
+        </Center>
       </Canvas>
     </CanvasContainer>
   )

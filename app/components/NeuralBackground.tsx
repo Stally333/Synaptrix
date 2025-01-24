@@ -74,7 +74,7 @@ export const NeuralBackground: React.FC = () => {
     // Animation loop
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      ctx.strokeStyle = '#00FF00'
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)'
       ctx.lineWidth = 1.5
 
       nodesRef.current.forEach(node => {
@@ -86,42 +86,41 @@ export const NeuralBackground: React.FC = () => {
         if (node.x < 0 || node.x > canvas.width) node.vx *= -1
         if (node.y < 0 || node.y > canvas.height) node.vy *= -1
 
-        // Draw connections with enhanced pulse effect
+        // Draw connections with white color
         node.connections.forEach(connection => {
           const distance = Math.hypot(connection.x - node.x, connection.y - node.y)
           const maxDistance = 400
           
           if (distance < maxDistance) {
-            const opacity = 1 - (distance / maxDistance)
+            const opacity = (1 - (distance / maxDistance)) * 0.3
             const pulse = (Math.sin(Date.now() * 0.002) + 1) * 0.8
             ctx.globalAlpha = opacity * pulse
 
-            // Add glow effect
+            // Update glow color to white
             ctx.shadowBlur = 8
-            ctx.shadowColor = '#00FF00'
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.3)'
 
             ctx.beginPath()
             ctx.moveTo(node.x, node.y)
             ctx.lineTo(connection.x, connection.y)
             ctx.stroke()
 
-            // Reset shadow for better performance
             ctx.shadowBlur = 0
           }
         })
 
-        // Draw larger nodes with glow
-        ctx.globalAlpha = 0.8
-        ctx.beginPath()
-        ctx.arc(node.x, node.y, 4, 0, Math.PI * 2)
-        ctx.fillStyle = '#00FF00'
-        ctx.fill()
-
-        // Add node glow
+        // Draw nodes in white
         ctx.globalAlpha = 0.4
         ctx.beginPath()
+        ctx.arc(node.x, node.y, 4, 0, Math.PI * 2)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'
+        ctx.fill()
+
+        // Node glow in white
+        ctx.globalAlpha = 0.2
+        ctx.beginPath()
         ctx.arc(node.x, node.y, 7, 0, Math.PI * 2)
-        ctx.fillStyle = '#00FF00'
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
         ctx.fill()
       })
 

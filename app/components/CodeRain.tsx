@@ -54,7 +54,7 @@ export const CodeRain = () => {
     const maxSpeed = 2
 
     const draw = () => {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
       ctx.fillStyle = '#00FF00'
@@ -65,9 +65,8 @@ export const CodeRain = () => {
         const x = i * fontSize
         const y = drops[i] * fontSize
 
-        // Add varying opacity for depth effect
-        const opacity = Math.random() * 0.5 + 0.5
-        ctx.fillStyle = `rgba(0, 255, 0, ${opacity})`
+        const opacity = Math.random() * 0.3 + 0.2
+        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`
         
         ctx.fillText(char, x, y)
 
@@ -75,7 +74,6 @@ export const CodeRain = () => {
           drops[i] = 0
         }
         
-        // Vary the speed of each column
         drops[i] += Math.random() * maxSpeed
       }
     }
