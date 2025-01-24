@@ -6,10 +6,17 @@ import { CodeRain } from './components/CodeRain'
 import { AnimatedCode, StatusText, Cursor, Divider } from './components/AnimatedStatus'
 import { ScrollingLogs } from './components/ScrollingLogs'
 import { useRouter } from 'next/navigation'
+import { AnimatedStat } from './components/AnimatedStats'
 
 const fadeIn = keyframes`
   from { opacity: 0; }
   to { opacity: 1; }
+`
+
+const glowPulse = keyframes`
+  0% { box-shadow: 0 0 5px ${props => props.theme.colors.primary}40; }
+  50% { box-shadow: 0 0 30px ${props => props.theme.colors.primary}80; }
+  100% { box-shadow: 0 0 5px ${props => props.theme.colors.primary}40; }
 `
 
 const MainContainer = styled.div`
@@ -67,9 +74,16 @@ const TempText = styled.h1`
   color: ${props => props.theme.colors.primary};
   font-family: ${props => props.theme.fonts.secondary};
   text-align: center;
-  font-size: 3rem;
-  letter-spacing: 0.5rem;
+  font-size: 3.5rem;
+  letter-spacing: 0.2rem;
   margin-bottom: 1rem;
+  text-transform: lowercase;
+  line-height: 1.2;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 `
 
 const SubTitle = styled.h2`
@@ -144,8 +158,10 @@ const LoadingProgress = styled.div`
 const CountdownTimer = styled.div`
   color: ${props => props.theme.colors.primary};
   font-family: ${props => props.theme.fonts.primary};
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: bold;
+  text-align: right;
+  margin-bottom: 0.5rem;
   text-shadow: 0 0 10px ${props => props.theme.colors.primary};
 `
 
@@ -223,24 +239,67 @@ const DetailedDescription = styled(Description)`
 
 const EnterButton = styled.button`
   position: absolute;
-  bottom: 4rem;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 2rem;
+  left: 2rem;
+  padding: 1rem 3rem;
   background: transparent;
   border: 1px solid ${props => props.theme.colors.primary};
   color: ${props => props.theme.colors.primary};
-  padding: 0.5rem 2rem;
-  font-family: ${props => props.theme.fonts.primary};
-  font-size: 1rem;
+  font-family: ${props => props.theme.fonts.secondary};
+  font-size: 1.5rem;
+  letter-spacing: 2px;
   cursor: pointer;
   transition: all 0.3s ease;
-  opacity: 0;
-  animation: ${fadeIn} 1s forwards;
-  
+  z-index: 10;
+  text-transform: uppercase;
+  font-weight: 500;
+
   &:hover {
     background: ${props => props.theme.colors.primary}20;
-    box-shadow: 0 0 20px ${props => props.theme.colors.primary}40;
+    box-shadow: 0 0 30px ${props => props.theme.colors.primary}60;
+    transform: scale(1.05);
   }
+
+  &:active {
+    transform: scale(0.98);
+  }
+`
+
+const DeniedButton = styled(EnterButton)`
+  border-color: #FF0000;
+  color: #FF0000;
+  cursor: not-allowed;
+
+  &:hover {
+    background: #FF000020;
+    box-shadow: 0 0 30px #FF000060;
+    transform: none;
+  }
+
+  &:active {
+    transform: none;
+  }
+`
+
+const BrainPreloader = styled.iframe`
+  width: 0;
+  height: 0;
+  opacity: 0;
+  position: absolute;
+  pointer-events: none;
+`
+
+const LoadingOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: ${props => props.theme.colors.background};
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 const synaptrixLogs = [
@@ -279,11 +338,17 @@ const synaptrixLogs = [
   'System ready for neural connection'
 ]
 
+const interfaceOptions = [
+  'Brain-Computer Interface',
+  'Neural Pathway Matrix',
+  'Quantum Neural Network',
+  'Synaptic Bridge Protocol'
+]
+
 export default function Home() {
   const router = useRouter()
-  const [forceUpdate, setForceUpdate] = useState(0)
-  const [loadingStep, setLoadingStep] = useState(0)
   const [countdown, setCountdown] = useState(30)
+  const [currentTask, setCurrentTask] = useState(0)
   const [processingTasks] = useState([
     'Analyzing neural patterns',
     'Optimizing signal processing',
@@ -291,26 +356,8 @@ export default function Home() {
     'Synchronizing neural interface',
     'Validating connection stability'
   ])
-  const [currentTask, setCurrentTask] = useState(0)
-  
-  const systemLogs = [
-    'Initializing Synaptrix kernel v2.1.4...',
-    'Loading neural pattern recognition modules [===>]...',
-    'Calibrating EEG signal processors (freq: 0.5-100Hz)...',
-    'Establishing neural feedback loops (latency: <1ms)...',
-    'Optimizing quantum neural pathways...',
-    'Analyzing synaptic connections...',
-    'Validating neural interface stability...',
-    'Synchronizing quantum states...',
-    'Processing neural feedback data...',
-    'System ready for neural connection'
-  ]
-
-  const handleLogComplete = () => {
-    if (loadingStep < systemLogs.length - 1) {
-      setLoadingStep(prev => prev + 1)
-    }
-  }
+  const [currentInterface, setCurrentInterface] = useState(0)
+  const [isAccessible, setIsAccessible] = useState(true)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -335,33 +382,34 @@ export default function Home() {
   }, [processingTasks.length])
 
   useEffect(() => {
-    // Force a single update when component mounts
-    setForceUpdate(prev => prev + 1)
+    const interfaceTimer = setInterval(() => {
+      setCurrentInterface(prev => (prev + 1) % interfaceOptions.length)
+    }, 4000)
+
+    return () => clearInterval(interfaceTimer)
+  }, [])
+
+  useEffect(() => {
+    const accessTimer = setInterval(() => {
+      setIsAccessible(prev => !prev)
+    }, 2000)
+
+    return () => clearInterval(accessTimer)
   }, [])
 
   return (
-    <>
+    <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
       <CodeRain />
+      
       <MainContainer>
         <BrainContainer>
           <HeaderSection>
             <TempText>
-              SYNAPTRIX
-              <br />
-              NEURALIS 1.0
+              <div>initializing synaptrix</div>
+              <div>neuralis 1.0...</div>
             </TempText>
             <SubTitle>Advanced Neural Interface System</SubTitle>
             <DetailedDescription>
-              <div>
-                <StatusLabel>status: </StatusLabel>
-                <TypewriterText 
-                  key={`status-text-${forceUpdate}`}
-                  text="initializing neural pathways..." 
-                  delay={50} 
-                />
-                <Cursor />
-              </div>
-              <br />
               <Divider>/ / / / / / / / / / / / / / / /</Divider>
               <br />
               Real-time EEG processing and neural feedback system
@@ -372,11 +420,11 @@ export default function Home() {
               </StatsLine>
               <br />
               <div>
-                <StatusLabel>connecting: </StatusLabel>
+                <StatusLabel>connecting:&nbsp;</StatusLabel>
                 <TypewriterText 
-                  key={`connecting-text-${forceUpdate}`}
-                  text="brain-computer interface"
+                  text={interfaceOptions[currentInterface]}
                   delay={50} 
+                  key={currentInterface}
                 />
                 <Cursor />
               </div>
@@ -384,9 +432,36 @@ export default function Home() {
               <Divider>/ / / / / / / / / / / / / / / /</Divider>
               <br />
               <StatsLine>
-                <StatusText delay="0.6s">Bandwidth: 1.2 TB/s</StatusText>
-                <StatusText delay="0.7s">Latency: 0.3ms</StatusText>
-                <StatusText delay="0.8s">Sync: 99.99%</StatusText>
+                <AnimatedStat 
+                  label="Bandwidth"
+                  startValue={0}
+                  endValue={1.2}
+                  unit=" TB/s"
+                  delay="0.6s"
+                  decimals={2}
+                  fluctuationRange={15}
+                  updateInterval={20}
+                />
+                <AnimatedStat 
+                  label="Latency"
+                  startValue={1}
+                  endValue={0.3}
+                  unit="ms"
+                  delay="0.7s"
+                  decimals={2}
+                  fluctuationRange={10}
+                  updateInterval={30}
+                />
+                <AnimatedStat 
+                  label="Sync"
+                  startValue={0}
+                  endValue={99.99}
+                  unit="%"
+                  delay="0.8s"
+                  decimals={2}
+                  fluctuationRange={0.05}
+                  updateInterval={80}
+                />
               </StatsLine>
             </DetailedDescription>
           </HeaderSection>
@@ -398,13 +473,20 @@ export default function Home() {
               {processingTasks[currentTask]}...
             </ProcessList>
           </LoadingProgress>
+
           {countdown === 0 && (
-            <EnterButton onClick={() => router.push('/dashboard')}>
-              Enter Synaptrix
-            </EnterButton>
+            isAccessible ? (
+              <EnterButton onClick={() => router.push('/dashboard')}>
+                Enter Synaptrix
+              </EnterButton>
+            ) : (
+              <DeniedButton onClick={(e) => e.preventDefault()}>
+                Access Denied
+              </DeniedButton>
+            )
           )}
         </BrainContainer>
       </MainContainer>
-    </>
+    </div>
   )
 } 

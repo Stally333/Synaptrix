@@ -6,6 +6,7 @@ const DashboardContainer = styled.div`
   min-height: 100vh;
   background: ${props => props.theme.colors.background};
   color: ${props => props.theme.colors.text};
+  position: relative;
 `
 
 const Header = styled.header`
@@ -45,6 +46,14 @@ const NavLink = styled.a`
   }
 `
 
+const MainContent = styled.div`
+  position: relative;
+  height: calc(100vh - 64px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
 export default function Dashboard() {
   return (
     <DashboardContainer>
@@ -57,7 +66,9 @@ export default function Dashboard() {
           <NavLink href="#">Settings</NavLink>
         </Navigation>
       </Header>
-      {/* Add your dashboard content here */}
+      <MainContent>
+        {/* Placeholder for the removed BrainViz component */}
+      </MainContent>
     </DashboardContainer>
   )
 } 

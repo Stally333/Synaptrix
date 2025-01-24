@@ -37,8 +37,8 @@ export const TypewriterText = ({ text, delay = 50, onComplete }: TypewriterTextP
     
     let index = 0
     const timer = setInterval(() => {
-      if (index < text.length) {
-        setDisplayedText((prev) => prev + text.charAt(index))
+      if (index <= text.length) {
+        setDisplayedText(text.substring(0, index + 1))
         index++
       } else {
         setIsComplete(true)

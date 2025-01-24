@@ -28,6 +28,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link 
+          rel="preload" 
+          as="fetch" 
+          href="https://sketchfab.com/models/7a27c17fd6c0488bb31ab093236a47fb/embed" 
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className={`${rajdhani.variable} ${ibmPlexMono.variable}`}>
         <StyledComponentsRegistry>
           <Providers>
