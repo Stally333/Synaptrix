@@ -2,9 +2,9 @@
 import styled, { keyframes } from 'styled-components'
 
 const glow = keyframes`
-  0% { box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00; }
-  50% { box-shadow: 0 0 10px #00ff00, 0 0 15px #00ff00, 0 0 20px #00ff00; }
-  100% { box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00; }
+  0% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.3), 0 0 10px rgba(255, 255, 255, 0.2), 0 0 15px rgba(255, 255, 255, 0.1); }
+  50% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 15px rgba(255, 255, 255, 0.3), 0 0 20px rgba(255, 255, 255, 0.2); }
+  100% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.3), 0 0 10px rgba(255, 255, 255, 0.2), 0 0 15px rgba(255, 255, 255, 0.1); }
 `
 
 const ButtonContainer = styled.div`
@@ -13,44 +13,38 @@ const ButtonContainer = styled.div`
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 1.5rem;
-  z-index: 10;
+  gap: 1rem;
+  z-index: 100;
 `
 
 const TokenButton = styled.button`
-  background: linear-gradient(
-    180deg, 
-    rgba(0, 255, 0, 0.15) 0%,
-    rgba(255, 255, 255, 0.05) 100%
-  );
-  border: 1px solid #00ff00;
-  color: #00ff00;
   padding: 0.8rem 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: white;
   font-family: ${props => props.theme.fonts.secondary};
   font-size: 0.9rem;
-  font-weight: 500;
   letter-spacing: 1px;
   cursor: pointer;
   transition: all 0.3s ease;
-  animation: ${glow} 2s infinite;
+  animation: ${glow} 4s infinite;
   text-transform: uppercase;
   backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 
   &:hover {
+    border-color: rgba(255, 255, 255, 0.5);
     background: linear-gradient(
-      180deg, 
-      rgba(0, 255, 0, 0.2) 0%,
-      rgba(255, 255, 255, 0.1) 100%
+      180deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 100%
     );
-    transform: translateY(-2px);
-    animation: ${glow} 1s infinite;
   }
 
   &:active {
-    transform: translateY(0);
     background: linear-gradient(
-      180deg, 
-      rgba(0, 255, 0, 0.15) 0%,
+      180deg,
+      rgba(255, 255, 255, 0.15) 0%,
       rgba(255, 255, 255, 0.05) 100%
     );
   }
@@ -59,10 +53,10 @@ const TokenButton = styled.button`
 export const TokenButtons = () => {
   return (
     <ButtonContainer>
-      <TokenButton>Buy $SYNA</TokenButton>
-      <TokenButton>Trade $SYNA</TokenButton>
-      <TokenButton>Stake $SYNA</TokenButton>
-      <TokenButton>Invest $SYNA</TokenButton>
+      <TokenButton>BUY $SYNA</TokenButton>
+      <TokenButton>TRADE $SYNA</TokenButton>
+      <TokenButton>STAKE $SYNA</TokenButton>
+      <TokenButton>INVEST $SYNA</TokenButton>
     </ButtonContainer>
   )
 } 
