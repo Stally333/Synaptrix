@@ -7,6 +7,8 @@ import { AnimatedCode, StatusText, Cursor, Divider } from './components/Animated
 import { ScrollingLogs } from './components/ScrollingLogs'
 import { useRouter } from 'next/navigation'
 import { AnimatedStat } from './components/AnimatedStats'
+import { StatsBar } from './components/StatsBar'
+import { AnimatedStatsDisplay } from './components/AnimatedStatsDisplay'
 
 const fadeIn = keyframes`
   from { opacity: 0; }
@@ -152,22 +154,24 @@ const LoadingProgress = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 0.5rem;
+  gap: 0.2rem;
+  z-index: 20;
 `
 
 const CountdownTimer = styled.div`
   color: ${props => props.theme.colors.primary};
   font-family: ${props => props.theme.fonts.primary};
-  font-size: 2.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
   text-align: right;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.2rem;
   text-shadow: 0 0 10px ${props => props.theme.colors.primary};
 `
 
 const StatusIndicator = styled.div`
   font-size: 0.8rem;
   color: ${props => props.theme.colors.accent};
+  text-align: right;
 `
 
 const ProcessList = styled.div`
@@ -180,10 +184,18 @@ const ProcessList = styled.div`
 
 const StatsLine = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.5rem;
   width: 100%;
   padding: 0 1rem;
   margin: 0.3rem 0;
+
+  & > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
 `
 
 const StatusLabel = styled.span`
@@ -302,6 +314,20 @@ const LoadingOverlay = styled.div`
   align-items: center;
 `
 
+const StatsDisplay = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-top: 1px solid ${props => props.theme.colors.primary}40;
+  border-bottom: 1px solid ${props => props.theme.colors.primary}40;
+  font-family: ${props => props.theme.fonts.primary};
+  color: ${props => props.theme.colors.text};
+  opacity: 0.8;
+`
+
 const synaptrixLogs = [
   'Initializing quantum neural network...',
   `Loading Synaptrix Core:
@@ -343,6 +369,30 @@ const interfaceOptions = [
   'Neural Pathway Matrix',
   'Quantum Neural Network',
   'Synaptic Bridge Protocol'
+]
+
+const technicalDetails = [
+  'Initializing Quantum Neural Core v2.1.4...',
+  'class SynapticProcessor implements QuantumInterface {',
+  '  private neuralState: BrainwaveState;',
+  '  private quantumBuffer: CircuitBuffer<Qubit>;',
+  '}',
+  'Real-time EEG Processing: Sampling at 2048Hz',
+  'Neural Pattern Recognition: Deep Learning Model [Accuracy: 99.97%]',
+  'Quantum Processing Units: 1024 Qubits [Coherence Time: 100μs]',
+  'Loading Neuromorphic Architecture...',
+  'await brain.initializeQuantumCircuits({ mode: "superposition" });',
+  'Synaptic Strength: 145.3 mV/ms | Threshold: 95.5 mV',
+  'Neural Feedback Loop: Latency < 0.3ms | Jitter: 0.02ms',
+  'Quantum Entanglement Status: Stable [99.99% Fidelity]',
+  'BCI Protocol: IEEE-2945.1 [Neural Interface Standard]',
+  'for (const neuron of brain.activeNeurons) {',
+  '  await quantum.process(neuron.signals);',
+  '  ai.optimize(neuron.patterns);',
+  '}',
+  'Memory Allocation: 1.21 PB Quantum Memory',
+  'Neural Compression Ratio: 1:1000000 [Lossless]',
+  'Initializing Saffron AI Core for Pattern Analysis...'
 ]
 
 export default function Home() {
@@ -397,6 +447,11 @@ export default function Home() {
     return () => clearInterval(accessTimer)
   }, [])
 
+  const formatCountdown = (seconds: number) => {
+    const ms = seconds * 1000
+    return `${ms.toString().padStart(5, '0')}ms`
+  }
+
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
       <CodeRain />
@@ -411,12 +466,19 @@ export default function Home() {
             <SubTitle>Advanced Neural Interface System</SubTitle>
             <DetailedDescription>
               <Divider>/ / / / / / / / / / / / / / / /</Divider>
-              <br />
-              Real-time EEG processing and neural feedback system
+              <ScrollingLogs 
+                logs={technicalDetails}
+                height="200px"
+                typingSpeed={30}
+              />
+              <Divider>/ / / / / / / / / / / / / / / /</Divider>
+              <AnimatedStatsDisplay />
               <br />
               <StatsLine>
-                <StatusText delay="0.2s">Quantum Processing Units: Online</StatusText>
-                <StatusText delay="0.3s">Neural Pattern Recognition: Active</StatusText>
+                <div>
+                  <StatusText delay="0.2s">Quantum Processing Units: Online</StatusText>
+                  <StatusText delay="0.3s">Neural Pattern Recognition: Active</StatusText>
+                </div>
               </StatsLine>
               <br />
               <div>
@@ -432,42 +494,52 @@ export default function Home() {
               <Divider>/ / / / / / / / / / / / / / / /</Divider>
               <br />
               <StatsLine>
-                <AnimatedStat 
-                  label="Bandwidth"
-                  startValue={0}
-                  endValue={1.2}
-                  unit=" TB/s"
-                  delay="0.6s"
-                  decimals={2}
-                  fluctuationRange={15}
-                  updateInterval={20}
-                />
-                <AnimatedStat 
-                  label="Latency"
-                  startValue={1}
-                  endValue={0.3}
-                  unit="ms"
-                  delay="0.7s"
-                  decimals={2}
-                  fluctuationRange={10}
-                  updateInterval={30}
-                />
-                <AnimatedStat 
-                  label="Sync"
-                  startValue={0}
-                  endValue={99.99}
-                  unit="%"
-                  delay="0.8s"
-                  decimals={2}
-                  fluctuationRange={0.05}
-                  updateInterval={80}
-                />
+                <div>
+                  <AnimatedStat 
+                    label="Bandwidth"
+                    startValue={0}
+                    endValue={1.2}
+                    unit=" TB/s"
+                    delay="0.6s"
+                    decimals={2}
+                    fluctuationRange={15}
+                    updateInterval={20}
+                  />
+                  <StatsBar value={80} style={{ width: '60%' }} />
+                </div>
+                <div>
+                  <AnimatedStat 
+                    label="Latency"
+                    startValue={1}
+                    endValue={0.3}
+                    unit="ms"
+                    delay="0.7s"
+                    decimals={2}
+                    fluctuationRange={10}
+                    updateInterval={30}
+                    warningThreshold={0.5}
+                  />
+                  <StatsBar value={95} style={{ width: '60%' }} />
+                </div>
+                <div>
+                  <AnimatedStat 
+                    label="Sync"
+                    startValue={0}
+                    endValue={99.99}
+                    unit="%"
+                    delay="0.8s"
+                    decimals={2}
+                    fluctuationRange={0.05}
+                    updateInterval={80}
+                  />
+                  <StatsBar value={99.99} style={{ width: '60%' }} />
+                </div>
               </StatsLine>
             </DetailedDescription>
           </HeaderSection>
 
           <LoadingProgress>
-            <CountdownTimer>{countdown}s</CountdownTimer>
+            <CountdownTimer>{formatCountdown(countdown)}</CountdownTimer>
             <StatusIndicator>System Loading...</StatusIndicator>
             <ProcessList>
               {processingTasks[currentTask]}...
