@@ -4,8 +4,10 @@ import { Canvas } from '@react-three/fiber'
 import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei'
 import { BrainModel } from './BrainModel'
 import { NeuralPathways } from './NeuralPathways'
+import { NeuralHeatmap } from './NeuralHeatmap'
 import styled from 'styled-components'
 import * as THREE from 'three'
+import { BrainRegions } from './BrainRegions'
 
 const CanvasContainer = styled.div`
   width: 100%;
@@ -19,6 +21,8 @@ export const BrainContainer = () => {
 
   return (
     <CanvasContainer>
+      <NeuralHeatmap />
+      <BrainRegions />
       <NeuralPathways brainDimensions={brainDimensions} />
       <Canvas>
         <PerspectiveCamera 
