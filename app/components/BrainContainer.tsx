@@ -1,9 +1,11 @@
 'use client'
+import { useState } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, PerspectiveCamera, Environment, Center } from '@react-three/drei'
+import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei'
 import { BrainModel } from './BrainModel'
 import { NeuralPathways } from './NeuralPathways'
 import styled from 'styled-components'
+import * as THREE from 'three'
 
 const CanvasContainer = styled.div`
   width: 100%;
@@ -13,9 +15,11 @@ const CanvasContainer = styled.div`
 `
 
 export const BrainContainer = () => {
+  const [brainDimensions, setBrainDimensions] = useState<THREE.Box3 | null>(null)
+
   return (
     <CanvasContainer>
-      <NeuralPathways />
+      <NeuralPathways brainDimensions={brainDimensions} />
       <Canvas>
         <PerspectiveCamera 
           makeDefault 
@@ -40,7 +44,10 @@ export const BrainContainer = () => {
         <Environment preset="city" />
         
         <group position={[0, -1, 0]}>
-          <BrainModel scale={1.75} />
+          <BrainModel 
+            scale={1.75} 
+            onBrainDimensions={setBrainDimensions}
+          />
         </group>
       </Canvas>
     </CanvasContainer>

@@ -22,11 +22,57 @@ interface Pathway {
   color: string
 }
 
-export const NeuralPathways = () => {
+interface NeuralPathwaysProps {
+  brainDimensions?: THREE.Box3 | null
+}
+
+export const NeuralPathways = ({ brainDimensions }: NeuralPathwaysProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const pathwaysRef = useRef<Pathway[]>([])
   const frameRef = useRef<number>()
   const { stats } = useNeural()
+
+  // Create pathways function moved outside useEffect
+  const createPathways = (canvas: HTMLCanvasElement) => {
+    if (!brainDimensions) return
+
+    const pathways: Pathway[] = []
+    const centerX = canvas.width / 2
+    const centerY = canvas.height / 2
+
+    // Calculate brain bounds in screen space
+    const size = brainDimensions.getSize(new THREE.Vector3())
+    const brainWidth = size.x * 100
+    const brainHeight = size.y * 100
+
+    for (let i = 0; i < 30; i++) {
+      const angle = (i / 30) * Math.PI * 2
+      const radiusX = brainWidth * 0.5
+      const radiusY = brainHeight * 0.5
+
+      const x = centerX + Math.cos(angle) * radiusX
+      const y = centerY + Math.sin(angle) * radiusY
+      const randomOffset = 20 * (Math.random() - 0.5)
+      
+      pathways.push({
+        start: new THREE.Vector3(
+          x + randomOffset,
+          y + randomOffset,
+          0
+        ),
+        end: new THREE.Vector3(
+          centerX + (Math.random() - 0.5) * radiusX * 0.8,
+          centerY + (Math.random() - 0.5) * radiusY * 0.8,
+          0
+        ),
+        progress: Math.random(),
+        active: true,
+        color: '#00FF00'
+      })
+    }
+
+    pathwaysRef.current = pathways
+  }
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -35,54 +81,18 @@ export const NeuralPathways = () => {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // Set canvas size
     const resizeCanvas = () => {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
+      // Recreate pathways after resize
+      createPathways(canvas)
     }
+
     resizeCanvas()
     window.addEventListener('resize', resizeCanvas)
 
-    // Create initial pathways
-    const createPathways = () => {
-      const pathways: Pathway[] = []
-      const centerX = canvas.width / 2
-      const centerY = canvas.height / 2
-
-      // Adjusted radius and positioning to match brain size
-      const baseRadius = 80 // Reduced from 100
-      
-      for (let i = 0; i < 30; i++) {
-        const angle1 = Math.random() * Math.PI * 2
-        const angle2 = Math.random() * Math.PI * 2
-        
-        // More focused radius range
-        const radius = Math.random() * 70 + baseRadius // Adjusted from 100+100 to 70+80
-        
-        // Offset the Y position slightly upward to match brain position
-        const yOffset = -50 // Added to shift connections up
-
-        pathways.push({
-          start: new THREE.Vector3(
-            centerX + Math.cos(angle1) * radius,
-            centerY + Math.sin(angle1) * radius + yOffset,
-            0
-          ),
-          end: new THREE.Vector3(
-            centerX + Math.cos(angle2) * radius,
-            centerY + Math.sin(angle2) * radius + yOffset,
-            0
-          ),
-          progress: Math.random(),
-          active: true,
-          color: '#00FF00'
-        })
-      }
-
-      pathwaysRef.current = pathways
-    }
-
-    createPathways()
+    // Initial pathway creation
+    createPathways(canvas)
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -138,7 +148,7 @@ export const NeuralPathways = () => {
         cancelAnimationFrame(frameRef.current)
       }
     }
-  }, [stats])
+  }, [stats, brainDimensions]) // Dependencies include brainDimensions
 
   return <PathwayCanvas ref={canvasRef} />
 } 

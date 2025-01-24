@@ -1,17 +1,26 @@
 'use client'
-import { useRef, Suspense } from 'react'
+import { useRef, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useGLTF, Html } from '@react-three/drei'
+import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 
 interface ModelProps {
   scale?: number
+  onBrainDimensions?: (dimensions: THREE.Box3) => void
 }
 
-function Model({ scale = 1 }: ModelProps) {
+export function BrainModel({ scale = 1, onBrainDimensions }: ModelProps) {
   const brainRef = useRef<THREE.Group>(null)
   const { scene } = useGLTF('/models/brain.glb')
   
+  // Calculate and expose brain dimensions
+  useEffect(() => {
+    if (brainRef.current) {
+      const box = new THREE.Box3().setFromObject(brainRef.current)
+      onBrainDimensions?.(box)
+    }
+  }, [scale, onBrainDimensions])
+
   // Add green wireframe material to all meshes
   scene.traverse((child) => {
     if (child instanceof THREE.Mesh) {
@@ -44,19 +53,5 @@ function Model({ scale = 1 }: ModelProps) {
         position={[0, 0, 0]}
       />
     </group>
-  )
-}
-
-export function BrainModel({ scale }: ModelProps) {
-  return (
-    <Suspense fallback={
-      <Html center>
-        <div style={{ color: 'green', background: 'black', padding: '10px' }}>
-          Loading brain model...
-        </div>
-      </Html>
-    }>
-      <Model scale={scale} />
-    </Suspense>
   )
 } 
