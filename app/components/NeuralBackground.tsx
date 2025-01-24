@@ -8,7 +8,7 @@ const Canvas = styled.canvas`
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.5;
+  opacity: 0.8;
   pointer-events: none;
 `
 
@@ -73,55 +73,38 @@ export const NeuralBackground: React.FC = () => {
 
     // Animation loop
     const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)'
-      ctx.lineWidth = 1.5
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
 
       nodesRef.current.forEach(node => {
-        // Update position
-        node.x += node.vx
-        node.y += node.vy
+        // Increase speed
+        node.x += node.vx * 1.5
+        node.y += node.vy * 1.5
 
-        // Bounce off walls
-        if (node.x < 0 || node.x > canvas.width) node.vx *= -1
-        if (node.y < 0 || node.y > canvas.height) node.vy *= -1
+        // Bounce off walls with more energy
+        if (node.x <= 0 || node.x >= canvas.width) node.vx *= -1.1
+        if (node.y <= 0 || node.y >= canvas.height) node.vy *= -1.1
 
-        // Draw connections with white color
+        // Draw nodes with stronger glow
+        ctx.beginPath()
+        ctx.arc(node.x, node.y, 2, 0, Math.PI * 2)
+        ctx.fillStyle = '#00ff00'
+        ctx.fill()
+        ctx.shadowBlur = 20
+        ctx.shadowColor = '#00ff00'
+        ctx.fill()
+
+        // Draw connections with higher opacity
         node.connections.forEach(connection => {
-          const distance = Math.hypot(connection.x - node.x, connection.y - node.y)
-          const maxDistance = 400
-          
-          if (distance < maxDistance) {
-            const opacity = (1 - (distance / maxDistance)) * 0.3
-            const pulse = (Math.sin(Date.now() * 0.002) + 1) * 0.8
-            ctx.globalAlpha = opacity * pulse
-
-            // Update glow color to white
-            ctx.shadowBlur = 8
-            ctx.shadowColor = 'rgba(255, 255, 255, 0.3)'
-
+          const distance = Math.hypot(node.x - connection.x, node.y - connection.y)
+          if (distance < 150) {
             ctx.beginPath()
             ctx.moveTo(node.x, node.y)
             ctx.lineTo(connection.x, connection.y)
+            ctx.strokeStyle = `rgba(0, 255, 0, ${0.8 - distance / 300})`
             ctx.stroke()
-
-            ctx.shadowBlur = 0
           }
         })
-
-        // Draw nodes in white
-        ctx.globalAlpha = 0.4
-        ctx.beginPath()
-        ctx.arc(node.x, node.y, 4, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'
-        ctx.fill()
-
-        // Node glow in white
-        ctx.globalAlpha = 0.2
-        ctx.beginPath()
-        ctx.arc(node.x, node.y, 7, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
-        ctx.fill()
       })
 
       frameRef.current = requestAnimationFrame(animate)
