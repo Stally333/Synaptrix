@@ -2,6 +2,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { NeuralBackground } from '../components/NeuralBackground'
+import { BrainContainer } from '../components/BrainContainer'
 
 const DashboardContainer = styled.div`
   min-height: 100vh;
@@ -54,6 +55,7 @@ const MainContent = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
 `
 
 export default function Dashboard() {
@@ -70,7 +72,7 @@ export default function Dashboard() {
         </Navigation>
       </Header>
       <MainContent>
-        {/* Placeholder for the removed BrainViz component */}
+        <BrainContainer />
       </MainContent>
     </DashboardContainer>
   )

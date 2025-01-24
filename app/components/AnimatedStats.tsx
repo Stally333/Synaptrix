@@ -15,9 +15,9 @@ const StatContainer = styled.span<{ delay?: string }>`
   gap: 0.5rem;
 `
 
-const Value = styled.span`
-  color: ${props => props.theme.colors.primary};
-  text-shadow: 0 0 8px ${props => props.theme.colors.primary}80;
+const Value = styled.span<{ isWarning?: boolean }>`
+  color: ${props => props.isWarning ? '#FF0000' : props.theme.colors.primary};
+  text-shadow: 0 0 8px ${props => props.isWarning ? '#FF0000' : props.theme.colors.primary}80;
 `
 
 interface AnimatedStatProps {
@@ -30,6 +30,7 @@ interface AnimatedStatProps {
   decimals?: number
   fluctuationRange?: number
   updateInterval?: number
+  warningThreshold?: number
 }
 
 export const AnimatedStat: React.FC<AnimatedStatProps> = ({
@@ -41,7 +42,8 @@ export const AnimatedStat: React.FC<AnimatedStatProps> = ({
   unit = '',
   decimals = 2,
   fluctuationRange = 0.5,
-  updateInterval = 100
+  updateInterval = 100,
+  warningThreshold
 }) => {
   const [value, setValue] = useState(startValue)
   const [hasReachedTarget, setHasReachedTarget] = useState(false)
@@ -89,7 +91,7 @@ export const AnimatedStat: React.FC<AnimatedStatProps> = ({
 
   return (
     <StatContainer delay={delay}>
-      {label}: <Value>{value}{unit}</Value>
+      {label}: <Value isWarning={warningThreshold && value > warningThreshold}>{value}{unit}</Value>
     </StatContainer>
   )
 } 
