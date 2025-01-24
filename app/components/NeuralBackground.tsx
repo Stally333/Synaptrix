@@ -8,7 +8,7 @@ const Canvas = styled.canvas`
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.8;
+  opacity: 0.3;
   pointer-events: none;
 `
 
@@ -73,7 +73,7 @@ export const NeuralBackground: React.FC = () => {
 
     // Animation loop
     const animate = () => {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
       nodesRef.current.forEach(node => {
@@ -85,23 +85,23 @@ export const NeuralBackground: React.FC = () => {
         if (node.x <= 0 || node.x >= canvas.width) node.vx *= -1.1
         if (node.y <= 0 || node.y >= canvas.height) node.vy *= -1.1
 
-        // Draw nodes with stronger glow
+        // Draw nodes with less intense glow
         ctx.beginPath()
         ctx.arc(node.x, node.y, 2, 0, Math.PI * 2)
         ctx.fillStyle = '#00ff00'
         ctx.fill()
-        ctx.shadowBlur = 20
+        ctx.shadowBlur = 8
         ctx.shadowColor = '#00ff00'
         ctx.fill()
 
-        // Draw connections with higher opacity
+        // Draw connections with even lower opacity
         node.connections.forEach(connection => {
           const distance = Math.hypot(node.x - connection.x, node.y - connection.y)
           if (distance < 150) {
             ctx.beginPath()
             ctx.moveTo(node.x, node.y)
             ctx.lineTo(connection.x, connection.y)
-            ctx.strokeStyle = `rgba(0, 255, 0, ${0.8 - distance / 300})`
+            ctx.strokeStyle = `rgba(0, 255, 0, ${0.2 - distance / 300})`
             ctx.stroke()
           }
         })
