@@ -1,12 +1,14 @@
 'use client'
 import React from 'react'
 import styled from 'styled-components'
+import { NeuralBackground } from '../components/NeuralBackground'
 
 const DashboardContainer = styled.div`
   min-height: 100vh;
   background: ${props => props.theme.colors.background};
   color: ${props => props.theme.colors.text};
   position: relative;
+  overflow: hidden;
 `
 
 const Header = styled.header`
@@ -57,6 +59,7 @@ const MainContent = styled.div`
 export default function Dashboard() {
   return (
     <DashboardContainer>
+      <NeuralBackground />
       <Header>
         <Logo>SYNAPTRIX</Logo>
         <Navigation>
