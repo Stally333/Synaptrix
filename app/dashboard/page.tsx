@@ -3,6 +3,9 @@ import React from 'react'
 import styled from 'styled-components'
 import { NeuralBackground } from '../components/NeuralBackground'
 import { BrainContainer } from '../components/BrainContainer'
+import { SignalProcessing } from '../components/dashboard/SignalProcessing'
+import { NeuralProvider } from '../context/NeuralContext'
+import { TokenButtons } from '../components/TokenButtons'
 
 const DashboardContainer = styled.div`
   min-height: 100vh;
@@ -49,31 +52,58 @@ const NavLink = styled.a`
   }
 `
 
-const MainContent = styled.div`
+const DashboardContent = styled.main`
   position: relative;
-  height: calc(100vh - 64px);
+  height: calc(100vh - 64px); // Subtract header height
+`
+
+const BrainSection = styled.div`
+  position: absolute;
+  top: 15%;
+  left: 0;
+  width: 100%;
+  height: 85%;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  position: relative;
+`
+
+const StatsOverlay = styled.div`
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: 80%;
+  max-width: 1200px;
 `
 
 export default function Dashboard() {
   return (
-    <DashboardContainer>
-      <NeuralBackground />
-      <Header>
-        <Logo>SYNAPTRIX</Logo>
-        <Navigation>
-          <NavLink href="#">Dashboard</NavLink>
-          <NavLink href="#">Neural Interface</NavLink>
-          <NavLink href="#">Analytics</NavLink>
-          <NavLink href="#">Settings</NavLink>
-        </Navigation>
-      </Header>
-      <MainContent>
-        <BrainContainer />
-      </MainContent>
-    </DashboardContainer>
+    <NeuralProvider>
+      <DashboardContainer>
+        <NeuralBackground />
+        <Header>
+          <Logo>SYNAPTRIX</Logo>
+          <Navigation>
+            <NavLink href="#">Dashboard</NavLink>
+            <NavLink href="#">Neural Interface</NavLink>
+            <NavLink href="#">Analytics</NavLink>
+            <NavLink href="#">Settings</NavLink>
+          </Navigation>
+        </Header>
+        
+        <DashboardContent>
+          <StatsOverlay>
+            <SignalProcessing />
+          </StatsOverlay>
+          <BrainSection>
+            <BrainContainer />
+            <TokenButtons />
+          </BrainSection>
+        </DashboardContent>
+      </DashboardContainer>
+    </NeuralProvider>
   )
 } 
