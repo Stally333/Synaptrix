@@ -2,6 +2,7 @@
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, PerspectiveCamera, Environment, Center } from '@react-three/drei'
 import { BrainModel } from './BrainModel'
+import { NeuralPathways } from './NeuralPathways'
 import styled from 'styled-components'
 
 const CanvasContainer = styled.div`
@@ -9,42 +10,38 @@ const CanvasContainer = styled.div`
   height: 100vh;
   position: relative;
   background: transparent;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `
 
-export function BrainContainer() {
+export const BrainContainer = () => {
   return (
     <CanvasContainer>
-      <Canvas
-        camera={{ 
-          position: [0, 0, 5],
-          fov: 75,
-          near: 0.1,
-          far: 1000
-        }}
-        style={{ background: 'transparent' }}
-      >
+      <NeuralPathways />
+      <Canvas>
+        <PerspectiveCamera 
+          makeDefault 
+          position={[0, -2, 10]}
+          fov={60}
+        />
         <OrbitControls 
-          enableZoom={true}
-          enablePan={true}
-          minDistance={2}
-          maxDistance={10}
-          enableRotate={false} // Disable manual rotation since we have auto-rotation
+          enablePan={false}
+          enableZoom={false}
+          enableRotate={true}
+          minPolarAngle={Math.PI / 2}
+          maxPolarAngle={Math.PI / 2}
+          autoRotate={true}
+          autoRotateSpeed={0.5}
+          rotateSpeed={0}
         />
         
-        {/* Adjust lighting for brain */}
-        <ambientLight intensity={2} />
-        <directionalLight position={[5, 5, 5]} intensity={2} />
-        <pointLight position={[10, 10, 10]} intensity={2} />
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[10, 10, 10]} intensity={1} />
         <pointLight position={[-10, -10, -10]} intensity={1} />
         
         <Environment preset="city" />
         
-        <Center> {/* This ensures perfect centering */}
-          <BrainModel scale={0.88} />
-        </Center>
+        <group position={[0, -1, 0]}>
+          <BrainModel scale={1.75} />
+        </group>
       </Canvas>
     </CanvasContainer>
   )
